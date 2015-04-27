@@ -1,8 +1,12 @@
 # ueditor-piggsoft
-对[ueditor](https://github.com/fex-team/ueditor) java包的封装  
+对[ueditor](https://github.com/fex-team/ueditor) java工具包改写
 
 ##为什么要重写？
 * 简单易用，开源，功能丰富。我喜欢。
 * java后台写的很好，但是我的项目中文件并非存在本地，而在另外的服务器统一管理。
-* 需要将里面耦合的一部分给拆开了
+* 需要将里面耦合的一部分给拆开了。
 * 计划先拆开，然后一步步优化。
+
+##怎么拆
+* 将所用到的部分类改成普通的bean，去掉部分静态化，隐式加入spring，用DI来管理类。
+* 加入回调类，在文件在本地存储完后，回调，该类需要自己编写。
