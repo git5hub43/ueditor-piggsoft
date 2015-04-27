@@ -7,6 +7,9 @@
 * 需要将里面耦合的一部分给拆开了。
 * 计划先拆开，然后一步步优化。
 
-##怎么拆
+##怎么拆？
 * 将所用到的部分类改成普通的bean，去掉部分静态化，隐式加入spring，用DI来管理类。
 * 加入回调类，在文件在本地存储完后，回调，该类需要自己编写。
+
+##改动说明
+* 加入[UeditorContextListener](https://github.com/piggsoft/ueditor-piggsoft/blob/master/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/UeditorContextListener.java)在项目初始化时，写入rootPath到System.properties。
