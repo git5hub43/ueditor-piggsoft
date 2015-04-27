@@ -15,7 +15,7 @@ import org.springframework.util.FileCopyUtils;
 
 import com.piggsoft.ueditor.define.ActionMap;
 
-public class ConfigManager implements InitializingBean{
+public class ConfigManager implements InitializingBean {
 
 	private Resource originalPath;
 
@@ -162,11 +162,9 @@ public class ConfigManager implements InitializingBean{
 	public void afterPropertiesSet() throws Exception {
 		initEnv();
 	}
-	
+
 	// 过滤输入字符串, 剔除多行注释以及替换掉反斜杠
-		private String filter ( String input ) {
-			
-			return input.replaceAll( "/\\*[\\s\\S]*?\\*/", "" );
-			
-		}
+	private String filter(String input) {
+		return input.replaceAll("/\\*[\\s\\S]*?\\*/", "");
+	}
 }
