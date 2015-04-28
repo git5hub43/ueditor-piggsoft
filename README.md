@@ -13,3 +13,5 @@
 
 ##改动说明
 * 加入[UeditorContextListener](https://github.com/piggsoft/ueditor-piggsoft/blob/master/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/UeditorContextListener.java)在项目初始化时，写入rootPath到System.properties。
+* 加入[Context](https://github.com/piggsoft/ueditor-piggsoft/blob/master/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/context/Context.java)，封装Conf和HttpServletRequest，且成为TheadLocal变量。
+* 加入[Constants](https://github.com/piggsoft/ueditor-piggsoft/blob/master/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/utils/Constants.java) 将字符串变量统一管理
