@@ -4,11 +4,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.InitializingBean;
 
 import com.piggsoft.ueditor.PathFormat;
+import com.piggsoft.ueditor.context.Configuration;
+import com.piggsoft.ueditor.context.Context;
 import com.piggsoft.ueditor.define.AppInfo;
 import com.piggsoft.ueditor.define.BaseState;
 import com.piggsoft.ueditor.define.MIMEType;
@@ -16,39 +15,45 @@ import com.piggsoft.ueditor.define.MultiState;
 import com.piggsoft.ueditor.define.State;
 import com.piggsoft.ueditor.upload.StorageManager;
 import com.piggsoft.ueditor.utils.Constants;
-import com.piggsoft.ueditor.ConfigManager;
-import com.piggsoft.ueditor.define.ActionMap;
 
 /**
  * 图片抓取器
  * @author hancong03@baidu.com
  *
  */
-public class ImageHunter implements InitializingBean{
+public class ImageHunter{
 
-	private String filename = null;
-	private String savePath = null;
-	private String rootPath = null;
-	private List<String> allowTypes = null;
-	private long maxSize = -1;
-	private ConfigManager configManager;
-	private List<String> filters = null;
 	private StorageManager storageManager;
 	
+	public State capture () {
+		Context context = Context.getInstance();
+		Configuration configuration = context.getConfiguration();
+		String[] list = context.getRequest().getParameterValues((String) context.getConfiguration().getFieldName());
+		String filename = configuration.getFilename();
+		String savePath = configuration.getSavePath();
+		String rootPath = configuration.getRootPath();
+		long maxSize = configuration.getMaxSize();
+		List<String> allowTypes = Arrays.asList(configuration.getAllowFiles());
+		List<String> filters = Arrays.asList(configuration.getFilter());
+		return capture(list, filename, savePath, rootPath, maxSize, allowTypes, filters);
+	}
 	
-	public State capture ( String[] list ) {
+	public State capture (String[] list, String filename, String savePath,
+			String rootPath, long maxSize, List<String> allowTypes,
+			List<String> filters) {
 		
 		MultiState state = new MultiState( true );
 		
 		for ( String source : list ) {
-			state.addState( captureRemoteData( source ) );
+			state.addState( captureRemoteData( source, filename, savePath, rootPath, maxSize, allowTypes, filters) );
 		}
-		
 		return state;
-		
 	}
 
-	public State captureRemoteData ( String urlStr ) {
+
+	public State captureRemoteData (String urlStr, String filename,
+			String savePath, String rootPath, long maxSize,
+			List<String> allowTypes, List<String> filters) {
 		
 		HttpURLConnection connection = null;
 		URL url = null;
@@ -57,7 +62,7 @@ public class ImageHunter implements InitializingBean{
 		try {
 			url = new URL( urlStr );
 
-			if ( !validHost( url.getHost() ) ) {
+			if ( !validHost(url.getHost(), filters) ) {
 				return new BaseState( false, AppInfo.PREVENT_HOST );
 			}
 			
@@ -72,21 +77,21 @@ public class ImageHunter implements InitializingBean{
 			
 			suffix = MIMEType.getSuffix( connection.getContentType() );
 			
-			if ( !validFileType( suffix ) ) {
+			if ( !validFileType(suffix, allowTypes) ) {
 				return new BaseState( false, AppInfo.NOT_ALLOW_FILE_TYPE );
 			}
 			
-			if ( !validFileSize( connection.getContentLength() ) ) {
+			if ( !validFileSize(connection.getContentLength(), maxSize) ) {
 				return new BaseState( false, AppInfo.MAX_SIZE );
 			}
 			
-			String savePath = this.getPath( this.savePath, this.filename, suffix );
-			String physicalPath = this.rootPath + savePath;
+			String _savePath = this.getPath(savePath, filename, suffix );
+			String physicalPath = rootPath + _savePath;
 
 			State state = storageManager.saveFileByInputStream( connection.getInputStream(), physicalPath );
 			
 			if ( state.isSuccess() ) {
-				state.putInfo(Constants.STATE_URL, PathFormat.format( savePath ) );
+				state.putInfo(Constants.STATE_URL, PathFormat.format( _savePath ) );
 				state.putInfo(Constants.STATE_SOURCE, urlStr );
 			}
 			
@@ -104,45 +109,26 @@ public class ImageHunter implements InitializingBean{
 		
 	}
 	
-	private boolean validHost ( String hostname ) {
+	private boolean validHost (String hostname, List<String> filters) {
 		
 		return !filters.contains( hostname );
 		
 	}
 	
-	private boolean validContentState ( int code ) {
+	private boolean validContentState (int code) {
 		
 		return HttpURLConnection.HTTP_OK == code;
 		
 	}
 	
-	private boolean validFileType ( String type ) {
+	private boolean validFileType (String type, List<String> allowTypes) {
 		
-		return this.allowTypes.contains( type );
+		return allowTypes.contains( type );
 		
 	}
 	
-	private boolean validFileSize ( int size ) {
-		return size < this.maxSize;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		Map<String, Object> conf = configManager.getConfig(ActionMap.CATCH_IMAGE);
-		this.filename = (String)conf.get( "filename" );
-		this.savePath = (String)conf.get( "savePath" );
-		this.rootPath = (String)conf.get( "rootPath" );
-		this.maxSize = (Long)conf.get( "maxSize" );
-		this.allowTypes = Arrays.asList( (String[])conf.get( "allowFiles" ) );
-		this.filters = Arrays.asList( (String[])conf.get( "filter" ) );
-	}
-
-	public ConfigManager getConfigManager() {
-		return configManager;
-	}
-
-	public void setConfigManager(ConfigManager configManager) {
-		this.configManager = configManager;
+	private boolean validFileSize (int size, long maxSize) {
+		return size < maxSize;
 	}
 
 	public StorageManager getStorageManager() {

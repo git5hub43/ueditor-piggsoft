@@ -1,12 +1,10 @@
 package com.piggsoft.ueditor.upload;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
+import com.piggsoft.ueditor.context.Configuration;
 import com.piggsoft.ueditor.context.Context;
 import com.piggsoft.ueditor.define.State;
-import com.piggsoft.ueditor.utils.Constants;
 
 public class Uploader{
 	protected Base64Uploader base64Uploader;
@@ -14,13 +12,13 @@ public class Uploader{
 	
 	public final State exec() {
 		Context context = Context.getInstance();
-		return doExec(context.getRequest(), context.getConf());
+		return doExec(context.getRequest(), context.getConfiguration());
 	}
 	
-	public final State doExec(HttpServletRequest request, Map<String, Object> conf) {
-		String filedName = (String) conf.get(Constants.ParamConf.FIELD_NAME);
+	public final State doExec(HttpServletRequest request, Configuration configuration) {
+		String filedName = configuration.getFieldName();
 		State state = null;
-		if ("true".equals(conf.get(Constants.ParamConf.IS_BASE64))) {
+		if ("true".equals(configuration.getIsBase64())) {
 			state = base64Uploader.save(request.getParameter(filedName));
 		} else {
 			state = binaryUploader.save(request);

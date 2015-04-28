@@ -53,9 +53,7 @@ public class ActionEnter {
 			state = uploader.exec();
 			break;
 		case ActionMap.CATCH_IMAGE:
-			String[] list = request.getParameterValues((String) context.getConf()
-					.get(Constants.ParamConf.FIELD_NAME));
-			state = imageHunter.capture(list);
+			state = imageHunter.capture();
 			break;
 		case ActionMap.LIST_IMAGE:
 		case ActionMap.LIST_FILE:

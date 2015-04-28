@@ -1,7 +1,5 @@
 package com.piggsoft.ueditor.context;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import com.piggsoft.ueditor.ConfigManager;
@@ -19,7 +17,7 @@ public class Context{
 	
 	protected int actionCode;
 	
-	protected Map<String, Object> conf;
+	protected Configuration configuration;
 	
 	private Context() {
 		
@@ -32,13 +30,12 @@ public class Context{
 	}
 	
 	public static Context createInstance(HttpServletRequest request, ConfigManager configManager) throws UeditorException {
-		System.out.println(contextThead.get());
 		Context context = new Context();
 		context.setRequest(request);
 		context.setConfigManager(configManager);
 		context.setActionCode(parseActionCode(request));
 		checkConfig(configManager);
-		context.setConf(context.getConfigManager().getConfig(context.getActionCode()));
+		context.setConfiguration(Configuration.newInstance(context.getConfigManager().getConfig(context.getActionCode())));
 		contextThead.set(context);
 		return context;
 	}
@@ -81,12 +78,12 @@ public class Context{
 		return actionCode;
 	}
 
-	public Map<String, Object> getConf() {
-		return conf;
+	public Configuration getConfiguration() {
+		return configuration;
 	}
 
-	public void setConf(Map<String, Object> conf) {
-		this.conf = conf;
+	public void setConfiguration(Configuration configuration) {
+		this.configuration = configuration;
 	}
 
 }

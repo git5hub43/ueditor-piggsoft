@@ -1,18 +1,9 @@
 package com.piggsoft.ueditor.upload;
 
-import com.piggsoft.ueditor.PathFormat;
-import com.piggsoft.ueditor.context.Context;
-import com.piggsoft.ueditor.define.AppInfo;
-import com.piggsoft.ueditor.define.BaseState;
-import com.piggsoft.ueditor.define.FileType;
-import com.piggsoft.ueditor.define.State;
-import com.piggsoft.ueditor.utils.Constants;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,12 +13,21 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import com.piggsoft.ueditor.PathFormat;
+import com.piggsoft.ueditor.context.Configuration;
+import com.piggsoft.ueditor.context.Context;
+import com.piggsoft.ueditor.define.AppInfo;
+import com.piggsoft.ueditor.define.BaseState;
+import com.piggsoft.ueditor.define.FileType;
+import com.piggsoft.ueditor.define.State;
+import com.piggsoft.ueditor.utils.Constants;
+
 public class BinaryUploader {
 
 	private StorageManager storageManager;
 
 	public State save(HttpServletRequest request) {
-		Map<String, Object> conf = Context.getInstance().getConf();
+		Configuration configuration = Context.getInstance().getConfiguration();
 		FileItemStream fileStream = null;
 		boolean isAjaxUpload = request.getHeader("X_Requested_With") != null;
 
@@ -57,7 +57,7 @@ public class BinaryUploader {
 				return new BaseState(false, AppInfo.NOTFOUND_UPLOAD_DATA);
 			}
 
-			String savePath = (String) conf.get(Constants.ParamConf.SAVE_PATH);
+			String savePath = configuration.getSavePath();
 			String originFileName = fileStream.getName();
 			String suffix = FileType.getSuffixByFilename(originFileName);
 
@@ -65,15 +65,15 @@ public class BinaryUploader {
 					originFileName.length() - suffix.length());
 			savePath = savePath + suffix;
 
-			long maxSize = ((Long) conf.get(Constants.ParamConf.MAX_SIZE)).longValue();
+			long maxSize = configuration.getMaxSize();
 
-			if (!validType(suffix, (String[]) conf.get(Constants.ParamConf.ALLOW_FILES))) {
+			if (!validType(suffix, configuration.getAllowFiles())) {
 				return new BaseState(false, AppInfo.NOT_ALLOW_FILE_TYPE);
 			}
 
 			savePath = PathFormat.parse(savePath, originFileName);
 
-			String physicalPath = (String) conf.get(Constants.ParamConf.ROOT_PATH) + savePath;
+			String physicalPath = configuration.getRootPath() + savePath;
 
 			InputStream is = fileStream.openStream();
 			State storageState = storageManager.saveFileByInputStream(is,

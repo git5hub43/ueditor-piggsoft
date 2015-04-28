@@ -3,7 +3,6 @@ package com.piggsoft.ueditor.hunter;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,11 +23,10 @@ public class ListManager{
 	public State list() {
 		Context context = Context.getInstance();
 		int index = getStartIndex(context.getRequest());
-		Map<String, Object> conf = context.getConf();
-		String rootPath = (String) conf.get("rootPath");
-		String dir = rootPath + (String) conf.get("dir");
-		String[] allowFiles = getAllowFiles(conf.get("allowFiles"));
-		int count = (Integer) conf.get("count");
+		String rootPath = context.getConfiguration().getRootPath();
+		String dir = rootPath + context.getConfiguration().getDir();
+		String[] allowFiles = getAllowFiles(context.getConfiguration().getAllowFiles());
+		int count = context.getConfiguration().getCount();
 		return list(index, rootPath, dir, allowFiles, count);
 	}
 	
@@ -94,7 +92,7 @@ public class ListManager{
 	
 	private String getPath ( File file ) {
 		Context context = Context.getInstance();
-		String rootPath = (String) context.getConf().get("rootPath");
+		String rootPath = context.getConfiguration().getRootPath();
 		String path = PathFormat.format( file.getAbsolutePath() );
 		return path.replace( rootPath, "/" );
 		

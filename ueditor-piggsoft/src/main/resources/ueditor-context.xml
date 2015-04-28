@@ -11,54 +11,27 @@
 		scope="prototype">
 		<property name="configManager" ref="configManager"></property>
 		<property name="imageHunter" ref="imageHunter"></property>
-		<property name="imageUploader" ref="imageUploader"></property>
-		<property name="scrawlUploader" ref="scrawlUploader"></property>
-		<property name="videoUploader" ref="videoUploader"></property>
-		<property name="fileUploader" ref="fileUploader"></property>
-		<property name="fileListManager" ref="fileListManager"></property>
-		<property name="imageListManager" ref="imageListManager"></property>
+		<property name="uploader" ref="uploader"></property>
+		<property name="listManager" ref="listManager"></property>
 	</bean>
-
-	<bean id="configManager" class="com.piggsoft.ueditor.ConfigManager">
+	
+	<bean id="uploader" class="com.piggsoft.ueditor.upload.Uploader">
+		<property name="base64Uploader" ref="base64Uploader"></property>
+		<property name="binaryUploader" ref="binaryUploader"></property>
+	</bean>
+	
+	<bean id="configManager" class="com.piggsoft.ueditor.ConfigManager" scope="prototype">
 		<property name="originalPath" value="classpath:config.json"></property>
 		<property name="rootPath" value="${ueditor-piggsoft-rootPath}"></property>
 	</bean>
+	
+	<bean id="listManager" class="com.piggsoft.ueditor.hunter.ListManager"></bean>
 
 
-	<bean id="fileListManager" class="com.piggsoft.ueditor.hunter.impl.FileListManager">
-		<property name="configManager" ref="configManager"></property>
-	</bean>
-	
-	<bean id="imageListManager" class="com.piggsoft.ueditor.hunter.impl.ImageListManager">
-		<property name="configManager" ref="configManager"></property>
-	</bean>
-	
 	<bean id="imageHunter" class="com.piggsoft.ueditor.hunter.ImageHunter">
-		<property name="configManager" ref="configManager"></property>
 		<property name="storageManager" ref="storageManager"></property>
 	</bean>
 	
-	<bean id="imageUploader" class="com.piggsoft.ueditor.upload.impl.ImageUploader">
-		<property name="configManager" ref="configManager"></property>
-		<property name="base64Uploader" ref="base64Uploader"></property>
-		<property name="binaryUploader" ref="binaryUploader"></property>
-	</bean>
-	<bean id="scrawlUploader" class="com.piggsoft.ueditor.upload.impl.ScrawlUploader">
-		<property name="configManager" ref="configManager"></property>
-		<property name="base64Uploader" ref="base64Uploader"></property>
-		<property name="binaryUploader" ref="binaryUploader"></property>
-	</bean>
-	<bean id="videoUploader" class="com.piggsoft.ueditor.upload.impl.VideoUploader">
-		<property name="configManager" ref="configManager"></property>
-		<property name="base64Uploader" ref="base64Uploader"></property>
-		<property name="binaryUploader" ref="binaryUploader"></property>
-	</bean>
-	<bean id="fileUploader" class="com.piggsoft.ueditor.upload.impl.FileUploader">
-		<property name="configManager" ref="configManager"></property>
-		<property name="base64Uploader" ref="base64Uploader"></property>
-		<property name="binaryUploader" ref="binaryUploader"></property>
-	</bean>
-
 	<bean id="base64Uploader" class="com.piggsoft.ueditor.upload.Base64Uploader">
 		<property name="storageManager" ref="storageManager"></property>
 	</bean>
