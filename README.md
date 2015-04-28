@@ -12,7 +12,7 @@
 * 加入回调类，在文件在本地存储完后，回调，该类需要自己编写。
 
 ##改动说明
-* 加入[UeditorContextListener](/blob/master/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/UeditorContextListener.java)，在项目初始化时，写入rootPath到System.properties。
-* 加入[Context](https://github.com/piggsoft/ueditor-piggsoft/blob/master/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/context/Context.java)，封装Conf和HttpServletRequest，且成为TheadLocal变量。
-* 加入[Constants](https://github.com/piggsoft/ueditor-piggsoft/blob/master/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/utils/Constants.java)，将字符串变量统一管理。
-* 加入[Configuration](https://github.com/piggsoft/ueditor-piggsoft/blob/master/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/context/Configuration.java)，不再从map中取值.
+* 加入[UeditorContextListener](/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/UeditorContextListener.java)，在项目初始化时，写入rootPath到System.properties。
+* 加入[Context](/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/context/Context.java)，封装Conf和HttpServletRequest，且成为TheadLocal变量。
+* 加入[Constants](/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/utils/Constants.java)，将字符串变量统一管理。
+* 加入[Configuration](/ueditor-piggsoft/src/main/java/com/piggsoft/ueditor/context/Configuration.java)，不再从map中取值.
