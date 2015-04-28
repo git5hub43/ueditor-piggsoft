@@ -3,11 +3,14 @@ package com.piggsoft.ueditor.hunter;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 
-import com.piggsoft.ueditor.ConfigManager;
 import com.piggsoft.ueditor.PathFormat;
+import com.piggsoft.ueditor.context.Context;
 import com.piggsoft.ueditor.define.AppInfo;
 import com.piggsoft.ueditor.define.BaseState;
 import com.piggsoft.ueditor.define.MultiState;
@@ -15,33 +18,41 @@ import com.piggsoft.ueditor.define.State;
 
 public class ListManager{
 
-	protected String dir = null;
-	protected String rootPath = null;
-	protected String[] allowFiles = null;
-	protected int count = 0;
-	protected ConfigManager configManager;
+	private static final String INDEX_PARAM_NAME = "start";
 	
 	
-	public State listFile ( int index ) {
+	public State list() {
+		Context context = Context.getInstance();
+		int index = getStartIndex(context.getRequest());
+		Map<String, Object> conf = context.getConf();
+		String rootPath = (String) conf.get("rootPath");
+		String dir = rootPath + (String) conf.get("dir");
+		String[] allowFiles = getAllowFiles(conf.get("allowFiles"));
+		int count = (Integer) conf.get("count");
+		return list(index, rootPath, dir, allowFiles, count);
+	}
+	
+	private State list (int index, String rootPath, String dir,
+			String[] allowFiles, int count) {
 		
-		File dir = new File( this.dir );
+		File fileDir = new File( dir );
 		State state = null;
 
-		if ( !dir.exists() ) {
+		if ( !fileDir.exists() ) {
 			return new BaseState( false, AppInfo.NOT_EXIST );
 		}
 		
-		if ( !dir.isDirectory() ) {
+		if ( !fileDir.isDirectory() ) {
 			return new BaseState( false, AppInfo.NOT_DIRECTORY );
 		}
 		
-		Collection<File> list = FileUtils.listFiles( dir, this.allowFiles, true );
+		Collection<File> list = FileUtils.listFiles( fileDir, allowFiles, true );
 		
 		if ( index < 0 || index > list.size() ) {
 			state = new MultiState( true );
 		} else {
-			Object[] fileList = Arrays.copyOfRange( list.toArray(), index, index + this.count );
-			state = this.getState( fileList );
+			Object[] fileList = Arrays.copyOfRange( list.toArray(), index, index + count );
+			state = getState( fileList );
 		}
 		
 		state.putInfo( "start", index );
@@ -49,6 +60,15 @@ public class ListManager{
 		
 		return state;
 		
+	}
+	
+	public int getStartIndex(HttpServletRequest request) {
+		String start = request.getParameter(INDEX_PARAM_NAME);
+		try {
+			return Integer.parseInt(start);
+		} catch (Exception e) {
+			return 0;
+		}
 	}
 	
 	private State getState ( Object[] files ) {
@@ -64,7 +84,7 @@ public class ListManager{
 			}
 			file = (File)obj;
 			fileState = new BaseState( true );
-			fileState.putInfo( "url", PathFormat.format( this.getPath( file ) ) );
+			fileState.putInfo( "url", PathFormat.format( getPath( file) ) );
 			state.addState( fileState );
 		}
 		
@@ -73,10 +93,10 @@ public class ListManager{
 	}
 	
 	private String getPath ( File file ) {
-		
+		Context context = Context.getInstance();
+		String rootPath = (String) context.getConf().get("rootPath");
 		String path = PathFormat.format( file.getAbsolutePath() );
-		
-		return path.replace( this.rootPath, "/" );
+		return path.replace( rootPath, "/" );
 		
 	}
 	
@@ -102,13 +122,4 @@ public class ListManager{
 		
 	}
 
-
-	public ConfigManager getConfigManager() {
-		return configManager;
-	}
-
-	public void setConfigManager(ConfigManager configManager) {
-		this.configManager = configManager;
-	}
-	
 }

@@ -4,36 +4,28 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.piggsoft.ueditor.ConfigManager;
+import com.piggsoft.ueditor.context.Context;
 import com.piggsoft.ueditor.define.State;
+import com.piggsoft.ueditor.utils.Constants;
 
 public class Uploader{
-	protected Map<String, Object> conf = null;
-	protected ConfigManager configManager;
-	
 	protected Base64Uploader base64Uploader;
 	protected BinaryUploader binaryUploader;
 	
-	public final State doExec(HttpServletRequest request) {
-		String filedName = (String) this.conf.get("fieldName");
+	public final State exec() {
+		Context context = Context.getInstance();
+		return doExec(context.getRequest(), context.getConf());
+	}
+	
+	public final State doExec(HttpServletRequest request, Map<String, Object> conf) {
+		String filedName = (String) conf.get(Constants.ParamConf.FIELD_NAME);
 		State state = null;
-
-		if ("true".equals(this.conf.get("isBase64"))) {
-			state = base64Uploader.save(request.getParameter(filedName),
-					this.conf);
+		if ("true".equals(conf.get(Constants.ParamConf.IS_BASE64))) {
+			state = base64Uploader.save(request.getParameter(filedName));
 		} else {
-			state = binaryUploader.save(request, this.conf);
+			state = binaryUploader.save(request);
 		}
-
 		return state;
-	}
-
-	public ConfigManager getConfigManager() {
-		return configManager;
-	}
-
-	public void setConfigManager(ConfigManager configManager) {
-		this.configManager = configManager;
 	}
 
 	public Base64Uploader getBase64Uploader() {
@@ -50,13 +42,5 @@ public class Uploader{
 
 	public void setBinaryUploader(BinaryUploader binaryUploader) {
 		this.binaryUploader = binaryUploader;
-	}
-
-	public Map<String, Object> getConf() {
-		return conf;
-	}
-
-	public void setConf(Map<String, Object> conf) {
-		this.conf = conf;
 	}
 }

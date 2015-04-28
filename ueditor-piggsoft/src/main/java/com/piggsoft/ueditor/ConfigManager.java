@@ -14,6 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 
 import com.piggsoft.ueditor.define.ActionMap;
+import com.piggsoft.ueditor.utils.Constants;
 
 public class ConfigManager implements InitializingBean {
 
@@ -23,11 +24,6 @@ public class ConfigManager implements InitializingBean {
 
 	private String rootPath;
 	
-	// 涂鸦上传filename定义
-	private final static String SCRAWL_FILE_NAME = "scrawl";
-	// 远程图片抓取filename定义
-	private final static String REMOTE_FILE_NAME = "remote";
-
 	private void initEnv() throws FileNotFoundException, IOException {
 		File file = originalPath.getFile();
 		String configContent = FileCopyUtils.copyToString(new FileReader(file));
@@ -38,7 +34,6 @@ public class ConfigManager implements InitializingBean {
 		} catch (Exception e) {
 			this.jsonConfig = null;
 		}
-
 	}
 
 	public Map<String, Object> getConfig(int type) {
@@ -49,62 +44,63 @@ public class ConfigManager implements InitializingBean {
 		switch (type) {
 
 		case ActionMap.UPLOAD_FILE:
-			conf.put("isBase64", "false");
-			conf.put("maxSize", this.jsonConfig.getLong("fileMaxSize"));
-			conf.put("allowFiles", this.getArray("fileAllowFiles"));
-			conf.put("fieldName", this.jsonConfig.getString("fileFieldName"));
-			savePath = this.jsonConfig.getString("filePathFormat");
+			conf.put(Constants.ParamConf.IS_BASE64, "false");
+			conf.put(Constants.ParamConf.MAX_SIZE, this.jsonConfig.getLong(Constants.ParamJsonConfig.FILE_MAX_SIZE));
+			conf.put(Constants.ParamConf.ALLOW_FILES, this.getArray(Constants.ParamJsonConfig.FILE_ALLOW_FILES));
+			conf.put(Constants.ParamConf.FIELD_NAME, this.jsonConfig.getString(Constants.ParamJsonConfig.FILE_FIELD_NAME));
+			savePath = this.jsonConfig.getString(Constants.ParamJsonConfig.FILE_PATH_FORMAT);
 			break;
 
 		case ActionMap.UPLOAD_IMAGE:
-			conf.put("isBase64", "false");
-			conf.put("maxSize", this.jsonConfig.getLong("imageMaxSize"));
-			conf.put("allowFiles", this.getArray("imageAllowFiles"));
-			conf.put("fieldName", this.jsonConfig.getString("imageFieldName"));
-			savePath = this.jsonConfig.getString("imagePathFormat");
+			conf.put(Constants.ParamConf.IS_BASE64, "false");
+			conf.put(Constants.ParamConf.MAX_SIZE, this.jsonConfig.getLong(Constants.ParamJsonConfig.IMAGE_MAX_SIZE));
+			conf.put(Constants.ParamConf.ALLOW_FILES, this.getArray(Constants.ParamJsonConfig.IMAGE_ALLOW_FILES));
+			conf.put(Constants.ParamConf.FIELD_NAME, this.jsonConfig.getString(Constants.ParamJsonConfig.IMAGE_FIELD_NAME));
+			savePath = this.jsonConfig.getString(Constants.ParamJsonConfig.IMAGE_PATH_FORMAT);
 			break;
 
 		case ActionMap.UPLOAD_VIDEO:
-			conf.put("maxSize", this.jsonConfig.getLong("videoMaxSize"));
-			conf.put("allowFiles", this.getArray("videoAllowFiles"));
-			conf.put("fieldName", this.jsonConfig.getString("videoFieldName"));
-			savePath = this.jsonConfig.getString("videoPathFormat");
+			conf.put(Constants.ParamConf.IS_BASE64, "false");
+			conf.put(Constants.ParamConf.MAX_SIZE, this.jsonConfig.getLong(Constants.ParamJsonConfig.VIDEO_MAX_SIZE));
+			conf.put(Constants.ParamConf.ALLOW_FILES, this.getArray(Constants.ParamJsonConfig.VIDEO_ALLOW_FILES));
+			conf.put(Constants.ParamConf.FIELD_NAME, this.jsonConfig.getString(Constants.ParamJsonConfig.VIDEO_FIELD_NAME));
+			savePath = this.jsonConfig.getString(Constants.ParamJsonConfig.VIDEO_PATH_FORMAT);
 			break;
 
 		case ActionMap.UPLOAD_SCRAWL:
-			conf.put("filename", ConfigManager.SCRAWL_FILE_NAME);
-			conf.put("maxSize", this.jsonConfig.getLong("scrawlMaxSize"));
-			conf.put("fieldName", this.jsonConfig.getString("scrawlFieldName"));
-			conf.put("isBase64", "true");
-			savePath = this.jsonConfig.getString("scrawlPathFormat");
+			conf.put(Constants.ParamConf.IS_BASE64, "true");
+			conf.put(Constants.ParamConf.FILE_NAME, Constants.SCRAWL_FILE_NAME);
+			conf.put(Constants.ParamConf.MAX_SIZE, this.jsonConfig.getLong(Constants.ParamJsonConfig.SCRAWL_MAX_SIZE));
+			conf.put(Constants.ParamConf.FIELD_NAME, this.jsonConfig.getString(Constants.ParamJsonConfig.SCRAWL_FIELD_NAME));
+			savePath = this.jsonConfig.getString(Constants.ParamJsonConfig.SCRAWL_PATH_FORMAT);
 			break;
 
 		case ActionMap.CATCH_IMAGE:
-			conf.put("filename", ConfigManager.REMOTE_FILE_NAME);
-			conf.put("filter", this.getArray("catcherLocalDomain"));
-			conf.put("maxSize", this.jsonConfig.getLong("catcherMaxSize"));
-			conf.put("allowFiles", this.getArray("catcherAllowFiles"));
-			conf.put("fieldName", this.jsonConfig.getString("catcherFieldName")
+			conf.put(Constants.ParamConf.FILE_NAME, Constants.REMOTE_FILE_NAME);
+			conf.put(Constants.ParamConf.FILTER, this.getArray(Constants.ParamJsonConfig.CATCHER_LOCAL_DOMAIN));
+			conf.put(Constants.ParamConf.MAX_SIZE, this.jsonConfig.getLong(Constants.ParamJsonConfig.CATCHER_MAX_SIZE));
+			conf.put(Constants.ParamConf.ALLOW_FILES, this.getArray(Constants.ParamJsonConfig.CATCHER_ALLOW_FILES));
+			conf.put(Constants.ParamConf.FIELD_NAME, this.jsonConfig.getString(Constants.ParamJsonConfig.CATCHER_FIELD_NAME)
 					+ "[]");
-			savePath = this.jsonConfig.getString("catcherPathFormat");
+			savePath = this.jsonConfig.getString(Constants.ParamJsonConfig.CATCHER_PATH_FORMAT);
 			break;
 
 		case ActionMap.LIST_IMAGE:
-			conf.put("allowFiles", this.getArray("imageManagerAllowFiles"));
-			conf.put("dir", this.jsonConfig.getString("imageManagerListPath"));
-			conf.put("count", this.jsonConfig.getInt("imageManagerListSize"));
+			conf.put(Constants.ParamConf.ALLOW_FILES, this.getArray(Constants.ParamJsonConfig.IMAGE_MANAGER_ALLOW_FILES));
+			conf.put(Constants.ParamConf.DIR, this.jsonConfig.getString(Constants.ParamJsonConfig.IMAGE_MANAGER_LIST_PATH));
+			conf.put(Constants.ParamConf.COUNT, this.jsonConfig.getInt(Constants.ParamJsonConfig.IMAGE_MANAGER_LIST_SIZE));
 			break;
 
 		case ActionMap.LIST_FILE:
-			conf.put("allowFiles", this.getArray("fileManagerAllowFiles"));
-			conf.put("dir", this.jsonConfig.getString("fileManagerListPath"));
-			conf.put("count", this.jsonConfig.getInt("fileManagerListSize"));
+			conf.put(Constants.ParamConf.ALLOW_FILES, this.getArray(Constants.ParamJsonConfig.FILE_MANAGER_ALLOW_FILES));
+			conf.put(Constants.ParamConf.DIR, this.jsonConfig.getString(Constants.ParamJsonConfig.FILE_MANAGER_LIST_PATH));
+			conf.put(Constants.ParamConf.COUNT, this.jsonConfig.getInt(Constants.ParamJsonConfig.FILE_MANAGER_LIST_SIZE));
 			break;
 
 		}
 
-		conf.put("savePath", savePath);
-		conf.put("rootPath", this.rootPath);
+		conf.put(Constants.ParamConf.SAVE_PATH, savePath);
+		conf.put(Constants.ParamConf.ROOT_PATH, this.rootPath);
 
 		return conf;
 

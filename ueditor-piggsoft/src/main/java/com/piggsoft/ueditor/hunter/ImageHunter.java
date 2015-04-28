@@ -15,6 +15,7 @@ import com.piggsoft.ueditor.define.MIMEType;
 import com.piggsoft.ueditor.define.MultiState;
 import com.piggsoft.ueditor.define.State;
 import com.piggsoft.ueditor.upload.StorageManager;
+import com.piggsoft.ueditor.utils.Constants;
 import com.piggsoft.ueditor.ConfigManager;
 import com.piggsoft.ueditor.define.ActionMap;
 
@@ -85,8 +86,8 @@ public class ImageHunter implements InitializingBean{
 			State state = storageManager.saveFileByInputStream( connection.getInputStream(), physicalPath );
 			
 			if ( state.isSuccess() ) {
-				state.putInfo( "url", PathFormat.format( savePath ) );
-				state.putInfo( "source", urlStr );
+				state.putInfo(Constants.STATE_URL, PathFormat.format( savePath ) );
+				state.putInfo(Constants.STATE_SOURCE, urlStr );
 			}
 			
 			return state;
