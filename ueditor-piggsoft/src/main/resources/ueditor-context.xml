@@ -43,6 +43,6 @@
 		<property name="storageSuccessCallBack" ref="storageSuccessCallBack"></property>
 	</bean>
 
-	<bean id="storageSuccessCallBack" class="com.piggsoft.ueditor.DefaultStorageSuccessCallBack"></bean>
+	<bean id="storageSuccessCallBack" class="com.piggsoft.ueditor.callback.DefaultStorageSuccessCallBack"></bean>
 
 </beans>

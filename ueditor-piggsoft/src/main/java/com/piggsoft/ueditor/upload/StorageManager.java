@@ -1,6 +1,6 @@
 package com.piggsoft.ueditor.upload;
 
-import com.piggsoft.ueditor.StorageSuccessCallBack;
+import com.piggsoft.ueditor.callback.StorageSuccessCallBack;
 import com.piggsoft.ueditor.define.AppInfo;
 import com.piggsoft.ueditor.define.BaseState;
 import com.piggsoft.ueditor.define.State;

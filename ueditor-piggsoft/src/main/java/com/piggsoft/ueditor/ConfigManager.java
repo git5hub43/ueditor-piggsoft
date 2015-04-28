@@ -7,12 +7,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.piggsoft.ueditor.define.ActionMap;
 import com.piggsoft.ueditor.utils.Constants;
 
@@ -29,7 +30,7 @@ public class ConfigManager implements InitializingBean {
 		String configContent = FileCopyUtils.copyToString(new FileReader(file));
 		configContent = filter(configContent);
 		try {
-			JSONObject jsonConfig = new JSONObject(configContent);
+			JSONObject jsonConfig = JSON.parseObject(configContent);
 			this.jsonConfig = jsonConfig;
 		} catch (Exception e) {
 			this.jsonConfig = null;
@@ -88,13 +89,13 @@ public class ConfigManager implements InitializingBean {
 		case ActionMap.LIST_IMAGE:
 			conf.put(Constants.ParamConf.ALLOW_FILES, this.getArray(Constants.ParamJsonConfig.IMAGE_MANAGER_ALLOW_FILES));
 			conf.put(Constants.ParamConf.DIR, this.jsonConfig.getString(Constants.ParamJsonConfig.IMAGE_MANAGER_LIST_PATH));
-			conf.put(Constants.ParamConf.COUNT, this.jsonConfig.getInt(Constants.ParamJsonConfig.IMAGE_MANAGER_LIST_SIZE));
+			conf.put(Constants.ParamConf.COUNT, this.jsonConfig.getInteger(Constants.ParamJsonConfig.IMAGE_MANAGER_LIST_SIZE));
 			break;
 
 		case ActionMap.LIST_FILE:
 			conf.put(Constants.ParamConf.ALLOW_FILES, this.getArray(Constants.ParamJsonConfig.FILE_MANAGER_ALLOW_FILES));
 			conf.put(Constants.ParamConf.DIR, this.jsonConfig.getString(Constants.ParamJsonConfig.FILE_MANAGER_LIST_PATH));
-			conf.put(Constants.ParamConf.COUNT, this.jsonConfig.getInt(Constants.ParamJsonConfig.FILE_MANAGER_LIST_SIZE));
+			conf.put(Constants.ParamConf.COUNT, this.jsonConfig.getInteger(Constants.ParamJsonConfig.FILE_MANAGER_LIST_SIZE));
 			break;
 
 		}
@@ -120,9 +121,9 @@ public class ConfigManager implements InitializingBean {
 	private String[] getArray(String key) {
 
 		JSONArray jsonArray = this.jsonConfig.getJSONArray(key);
-		String[] result = new String[jsonArray.length()];
+		String[] result = new String[jsonArray.size()];
 
-		for (int i = 0, len = jsonArray.length(); i < len; i++) {
+		for (int i = 0, len = jsonArray.size(); i < len; i++) {
 			result[i] = jsonArray.getString(i);
 		}
 
