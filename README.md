@@ -1,4 +1,6 @@
 # ueditor-piggsoft
+
+[![Join the chat at https://gitter.im/piggsoft/ueditor-piggsoft](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/piggsoft/ueditor-piggsoft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 对[ueditor](https://github.com/fex-team/ueditor) java工具包改写
 
 ##为什么要重写？
